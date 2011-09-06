@@ -4,14 +4,13 @@ from zope import schema
 
 from raptus.mailcone.customers import interfaces
 from raptus.mailcone.core.interfaces import IMailcone
-
+from raptus.mailcone.core.bases import BaseLocator
 
 
 class Customer(grok.Container):
     """ A customer
     """
     grok.implements(interfaces.ICustomer)
-    #id = schema.fieldproperty.FieldProperty(interfaces.ICustomer['id'])
 
 
 class CustomerContainer(grok.Container):
@@ -25,8 +24,6 @@ class CustomerContainer(grok.Container):
 def init_customers_container(obj, event):
     obj['customers'] = CustomerContainer()
 
-
-@grok.adapter(interfaces.ICustomersContainerHolder)
-@grok.implementer(interfaces.ICustomersContainer)
-def customers_container_of_holder(holder):
-    return holder['customers']
+class CustomersContainerLocator(BaseLocator):
+    splitedpath = ['customers']
+grok.global_utility(CustomersContainerLocator, provides=interfaces.ICustomersContainerLocator)

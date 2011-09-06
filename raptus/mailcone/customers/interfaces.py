@@ -1,14 +1,17 @@
 from zope import interface
 
+from raptus.mailcone.core.interfaces import IContainer
+from raptus.mailcone.core.interfaces import IContainerLocator
 
-#class ICustomersContainer(interfaces.IContainer):
-class ICustomersContainer(interface.Interface):
+
+
+class ICustomersContainer(IContainer):
     """ A container for customers
     """
 
 
-class ICustomersContainerHolder(interface.Interface):
-    """ Marker interface for objects adaptable to ICustomersContainer
+class ICustomersContainerLocator(IContainerLocator):
+    """ interface for locate the customers folder.
     """
 
 
