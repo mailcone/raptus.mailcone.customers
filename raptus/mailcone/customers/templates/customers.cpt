@@ -1,1 +1,2 @@
-import grok
+<div tal:replace="structure view.customerstable">
+</div>

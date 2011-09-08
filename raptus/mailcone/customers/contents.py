@@ -8,17 +8,16 @@ from raptus.mailcone.core.bases import BaseLocator
 
 
 class Customer(grok.Container):
-    """ A customer
-    """
     grok.implements(interfaces.ICustomer)
+    def __init__(self, name, address):
+        super(Customer, self).__init__()
+        self.id = name.lower().replace(' ', '_')
+        self.name = name
+        self.address = address
 
 
 class CustomerContainer(grok.Container):
-    """ A container for Customers
-    """
     grok.implements(interfaces.ICustomersContainer)
-    
-
 
 @grok.subscribe(IMailcone, grok.IApplicationInitializedEvent)
 def init_customers_container(obj, event):
