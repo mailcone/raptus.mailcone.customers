@@ -4,6 +4,7 @@ from zope import schema
 
 from raptus.mailcone.customers import interfaces
 from raptus.mailcone.core.interfaces import IMailcone
+from raptus.mailcone.core.interfaces import ISearchable
 from raptus.mailcone.core.bases import BaseLocator
 
 

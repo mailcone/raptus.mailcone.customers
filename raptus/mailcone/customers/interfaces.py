@@ -5,7 +5,6 @@ from raptus.mailcone.core.interfaces import IContainer
 from raptus.mailcone.core.interfaces import IContainerLocator
 
 
-
 class ICustomersContainer(IContainer):
     """ A container for customers
     """
@@ -22,3 +21,4 @@ class ICustomer(interface.Interface):
     id = schema.TextLine(title=u'id', required=True)
     name = schema.TextLine(title=u'name', required=True)
     address = schema.Text(title=u'address', required=True)
+    

@@ -1,2 +1,12 @@
-<div tal:replace="structure view.customerstable">
+
+<div class="ui-splitter">
+    <div>
+        <div tal:replace="structure view.customerstable" />
+        <div class="formControls">
+            <a tal:attributes="href view.addurl" class="ui-add ui-button" i18n:translate="">Add new Customer</a>
+        </div>
+    </div>
+    <div>
+        some other content...
+    </div>
 </div>

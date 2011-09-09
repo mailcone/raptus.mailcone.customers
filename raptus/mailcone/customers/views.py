@@ -12,6 +12,7 @@ from raptus.mailcone.customers import _
 from raptus.mailcone.customers import interfaces
 from raptus.mailcone.customers import contents
 from raptus.mailcone.layout.datatable import BaseDataTable
+from raptus.mailcone.layout.views import AddForm, EditForm
 
 grok.templatedir('templates')
 
@@ -19,6 +20,7 @@ grok.templatedir('templates')
 
 class CustomersTable(BaseDataTable):
     grok.context(interfaces.ICustomersContainer)
+    interface_fields = interfaces.ICustomer
 
 
 class Customers(Page):
@@ -30,27 +32,25 @@ class Customers(Page):
     def customerstable(self):
         return CustomersTable(self.context, self.request).html()
     
+    @property
+    def addurl(self):
+        return '%s/addcustomerform' % grok.url(self.request, self.context)
+    
 
-class AddCustomerForm(grok.AddForm):
+class AddCustomerForm(AddForm):
     grok.context(interfaces.ICustomersContainer)
     grok.require('zope.Public')
     form_fields = grok.AutoFields(interfaces.ICustomer).omit('id')
-    label = _('Add a customer')
-    
-    @grok.action(_('add_customer', default='add customer'))
-    def add(self, **data):
-        obj = contents.Customer(**data)
-        self.context[obj.id] = obj
+    label = _('Add a new customer')
+
+    def create(self, **data):
+        return contents.Customer(**data)
 
 
-class EditCustomerForm(grok.EditForm):
+class EditCustomerForm(EditForm):
     grok.context(interfaces.ICustomer)
     grok.require('zope.Public')
     form_fields = grok.AutoFields(interfaces.ICustomer).omit('id')
     label = _('Edit customer')
-    
-    @grok.action(_('save'))
-    def save(self, **data):
-        self.applyData(self.context, **data)
 
 
