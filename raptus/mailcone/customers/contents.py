@@ -3,27 +3,25 @@ import grok
 from zope import schema
 
 from raptus.mailcone.customers import interfaces
-from raptus.mailcone.core.interfaces import IMailcone
-from raptus.mailcone.core.interfaces import ISearchable
-from raptus.mailcone.core.bases import BaseLocator
+from raptus.mailcone.core import bases
+from raptus.mailcone.core.interfaces import IMailcone, ISearchable
 
 
-class Customer(grok.Container):
+class Customer(bases.Container):
     grok.implements(interfaces.ICustomer)
-    def __init__(self, name, address):
-        super(Customer, self).__init__()
-        self.id = name.lower().replace(' ', '_')
-        self.name = name
-        self.address = address
+    
+    id = None
+    name = None
+    address = None
 
 
-class CustomerContainer(grok.Container):
+class CustomerContainer(bases.Container):
     grok.implements(interfaces.ICustomersContainer)
 
 @grok.subscribe(IMailcone, grok.IApplicationInitializedEvent)
 def init_customers_container(obj, event):
     obj['customers'] = CustomerContainer()
 
-class CustomersContainerLocator(BaseLocator):
+class CustomersContainerLocator(bases.BaseLocator):
     splitedpath = ['customers']
 grok.global_utility(CustomersContainerLocator, provides=interfaces.ICustomersContainerLocator)

@@ -12,7 +12,7 @@ from raptus.mailcone.customers import _
 from raptus.mailcone.customers import interfaces
 from raptus.mailcone.customers import contents
 from raptus.mailcone.layout.datatable import BaseDataTable
-from raptus.mailcone.layout.views import AddForm, EditForm, DeleteForm
+from raptus.mailcone.layout.views import AddForm, EditForm, DeleteForm, DisplayForm
 
 grok.templatedir('templates')
 
@@ -23,11 +23,11 @@ class CustomersTable(BaseDataTable):
     interface_fields = interfaces.ICustomer
     ignors_fields = ['id']
     actions = (dict( title = _('delete'),
-                     cssclass = 'ui-icon ui-icon-trash',
-                     link = 'editcustomerform'),
+                     cssclass = 'ui-icon ui-icon-trash ui-modal-minsize',
+                     link = 'deletecustomerform'),
                dict( title = _('edit'),
                      cssclass = 'ui-icon ui-icon-pencil',
-                     link = 'deletecustomerform'),)
+                     link = 'editcustomerform'),)
 
 class Customers(Page):
     grok.name('index')
@@ -50,7 +50,7 @@ class AddCustomerForm(AddForm):
     label = _('Add a new customer')
 
     def create(self, **data):
-        return contents.Customer(**data)
+        return contents.Customer()
 
 
 class EditCustomerForm(EditForm):
@@ -64,7 +64,17 @@ class DeleteCustomerForm(DeleteForm):
     grok.context(interfaces.ICustomer)
     grok.require('zope.Public')
     
+    def item_title(self):
+        return self.context.name
     
     
-    
+class DisplayFormCustomer(DisplayForm):
+    grok.name('index')
+    grok.context(interfaces.ICustomer)
+    grok.require('zope.Public')
+
+
+
+
+
 
