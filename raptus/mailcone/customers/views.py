@@ -7,12 +7,12 @@ from zope.component import getUtility
 from raptus.mailcone.layout.views import Page
 from raptus.mailcone.layout.interfaces import IOverviewMenu
 from raptus.mailcone.layout.navigation import locatormenuitem
+from raptus.mailcone.layout.datatable import BaseDataTable
+from raptus.mailcone.layout.views import AddForm, EditForm, DeleteForm, DisplayForm
 
 from raptus.mailcone.customers import _
 from raptus.mailcone.customers import interfaces
 from raptus.mailcone.customers import contents
-from raptus.mailcone.layout.datatable import BaseDataTable
-from raptus.mailcone.layout.views import AddForm, EditForm, DeleteForm, DisplayForm
 
 grok.templatedir('templates')
 
