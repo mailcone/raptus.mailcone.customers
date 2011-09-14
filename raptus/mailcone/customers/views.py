@@ -4,11 +4,10 @@ from megrok import navigation
 
 from zope.component import getUtility
 
-from raptus.mailcone.layout.views import Page
 from raptus.mailcone.layout.interfaces import IOverviewMenu
 from raptus.mailcone.layout.navigation import locatormenuitem
 from raptus.mailcone.layout.datatable import BaseDataTable
-from raptus.mailcone.layout.views import AddForm, EditForm, DeleteForm, DisplayForm
+from raptus.mailcone.layout.views import Page, AddForm, EditForm, DeleteForm, DisplayForm
 
 from raptus.mailcone.customers import _
 from raptus.mailcone.customers import interfaces
@@ -23,10 +22,10 @@ class CustomersTable(BaseDataTable):
     interface_fields = interfaces.ICustomer
     ignors_fields = ['id']
     actions = (dict( title = _('delete'),
-                     cssclass = 'ui-icon ui-icon-trash ui-modal-minsize',
+                     cssclass = 'ui-icon ui-icon-trash ui-modal-minsize ui-datatable-ajaxlink',
                      link = 'deletecustomerform'),
                dict( title = _('edit'),
-                     cssclass = 'ui-icon ui-icon-pencil',
+                     cssclass = 'ui-icon ui-icon-pencil ui-datatable-ajaxlink',
                      link = 'editcustomerform'),)
 
 class Customers(Page):
