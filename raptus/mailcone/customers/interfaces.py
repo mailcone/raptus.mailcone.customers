@@ -23,3 +23,10 @@ class ICustomer(interface.Interface):
     name = schema.TextLine(title=_(u'Name'), required=True)
     address = schema.Text(title=_(u'Address'), required=True)
     
+    def get_rulesets(self):
+        """ get rulesets objects
+        """
+    
+    def set_rulesets(self, ids):
+        """ set customer in relation with any rulesets
+        """
