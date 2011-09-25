@@ -1,4 +1,7 @@
+import os
 import grok
+
+from grokcore.view.interfaces import ITemplateFileFactory
 
 from megrok import navigation
 
@@ -8,6 +11,8 @@ from raptus.mailcone.layout.interfaces import IOverviewMenu
 from raptus.mailcone.layout.navigation import locatormenuitem
 from raptus.mailcone.layout.datatable import BaseDataTable
 from raptus.mailcone.layout.views import Page, AddForm, EditForm, DeleteForm, DisplayForm
+
+from raptus.mailcone.rules.interfaces import IRuleset
 
 from raptus.mailcone.customers import _
 from raptus.mailcone.customers import interfaces
@@ -68,12 +73,50 @@ class DeleteCustomerForm(DeleteForm):
     
     
 class DisplayFormCustomer(DisplayForm):
+    grok.baseclass()
+    form_fields = grok.AutoFields(interfaces.ICustomer).omit('id')
+
+
+class RulesetsTable(BaseDataTable):
+    grok.context(interfaces.ICustomer)
+    interface_fields = IRuleset
+    ignors_fields = ['id']
+    inputs = (dict( title = _('Add Ruleset'),
+                     cssclass = '',
+                     type = 'checkbox',
+                     prefix = 'addruleset',),)
+    
+    def _ajaxcontent(self, brains):
+        return list()
+
+class TabsCustomer(grok.View):
     grok.name('index')
+    grok.template('customer')
     grok.context(interfaces.ICustomer)
     grok.require('zope.Public')
 
+    def customerhtml(self):
+        view = DisplayFormCustomer(self.context, self.request)
+        return view()
 
+    def rulesetshtml(self):
+        filepath = os.path.join(os.path.dirname(__file__),'templates','rulesets.cpt')
+        return getUtility(ITemplateFileFactory, name='cpt')(filename=filepath).render(self)
 
+    @property
+    def rulesetstable(self):
+        return RulesetsTable(self.context, self.request).html()
+
+    @property
+    def tabs(self, ignors=[]):
+        li = list()
+        li.append(dict(id='ui-tabs-customer-informations',
+                       title=_('Customer Informations'),
+                       html=self.customerhtml()))
+        li.append(dict(id='ui-tabs-rulesets',
+                       title=_('Rulesets'),
+                       html=self.rulesetshtml()))
+        return [i for i in li if not  i.get('id') in ignors]
 
 
 
