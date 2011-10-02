@@ -30,3 +30,12 @@ class ICustomer(interface.Interface):
     def set_rulesets(self, ids):
         """ set customer in relation with any rulesets
         """
+
+
+    def get_ruleset_data(self, id):
+        """ get data for a ruleitem
+        """
+        
+    def set_ruleset_data(self, id, data):
+        """ store data to specified ruleitem
+        """

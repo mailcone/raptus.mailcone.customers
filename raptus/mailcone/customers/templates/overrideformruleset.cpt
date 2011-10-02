@@ -5,6 +5,15 @@
           <dd tal:content="structure item.get('html')">Search string</dd>
       </tal:block>
     </dl>
-    
-    
+    <div class="ui-widget"
+         tal:condition="not: view.ruleitems">
+        <div class="ui-state-highlight ui-corner-all">
+            <span class="ui-icon ui-icon-info"></span>
+            <p i18n:translate="">Nothing to override!</p>
+            <p i18n:translate="">You must first decleare the overrides attributes in this rulesets.</p>
+        </div>
+    </div>
+    <div class="formControls">
+        <a attributes="href view.addurl" class="ui-ajax-content-submit ui-button" i18n:translate="">Submit Rulesets</a>
+    </div>
 </div>

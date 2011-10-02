@@ -1,21 +1,24 @@
 import os
 import grok
 import json
+import copy
 
 from grokcore.view.interfaces import ITemplateFileFactory
 
 from megrok import navigation
 
 from zope.component import getUtility
+from zope.formlib import form
 
 from raptus.mailcone.layout.interfaces import IOverviewMenu
 from raptus.mailcone.layout.navigation import locatormenuitem
 from raptus.mailcone.layout.datatable import BaseDataTable
 from raptus.mailcone.layout.views import Page, AddForm, EditForm, DeleteForm, DisplayForm
 
+from raptus.mailcone.core import utils
+
 from raptus.mailcone.rules.interfaces import IRuleset, IRuleItem
 from raptus.mailcone.rules.wireit import IdentifierMixing
-
 
 from raptus.mailcone.customers import _
 from raptus.mailcone.customers import interfaces
@@ -24,6 +27,10 @@ from raptus.mailcone.customers import contents
 grok.templatedir('templates')
 
 ADD_RULESET_PREFIX = 'addruleset'
+
+
+
+
 
 class CustomersTable(BaseDataTable):
     grok.context(interfaces.ICustomersContainer)
@@ -35,6 +42,7 @@ class CustomersTable(BaseDataTable):
                dict( title = _('edit'),
                      cssclass = 'ui-icon ui-icon-pencil ui-datatable-ajaxlink',
                      link = 'editcustomerform'),)
+
 
 
 class Customers(Page):
@@ -50,6 +58,7 @@ class Customers(Page):
     def addurl(self):
         return '%s/addcustomerform' % grok.url(self.request, self.context)
     
+    
 
 class AddCustomerForm(AddForm):
     grok.context(interfaces.ICustomersContainer)
@@ -61,11 +70,13 @@ class AddCustomerForm(AddForm):
         return contents.Customer()
 
 
+
 class EditCustomerForm(EditForm):
     grok.context(interfaces.ICustomer)
     grok.require('zope.Public')
     form_fields = grok.AutoFields(interfaces.ICustomer).omit('id')
     label = _('Edit customer')
+
 
 
 class DeleteCustomerForm(DeleteForm):
@@ -74,29 +85,58 @@ class DeleteCustomerForm(DeleteForm):
     
     def item_title(self):
         return self.context.name
-    
-    
+
+
+
+
+
 class DisplayFormCustomer(DisplayForm):
     grok.baseclass()
     form_fields = grok.AutoFields(interfaces.ICustomer).omit('id')
 
 
+
 class OverrideFormRuleItem(EditForm, IdentifierMixing):
     grok.context(IRuleItem)
+    
+    actions = list()
+    
+    
+    def __call__(self):
+        data = self.request.form.get('metadata', None)
+        if data:
+            jsondata = json.loads(data)
+            self.request = copy.copy(self.request)
+            self.request.form = jsondata
+            self.process(jsondata)
+        return super(OverrideFormRuleItem, self).__call__()
     
     def __init__(self, context, request, customer):
         super(OverrideFormRuleItem, self).__init__(context, request)
         self.customer = customer
     
-    # def setUpWidgets(self):
-    # mailcone/eggs/zope.formlib-4.0.5-py2.6.egg/zope/formlib/form.py
+    def process(self, data):
+        self.update_form()
+        results = dict()
+        form.getWidgetsData(self.widgets, self.prefix, results)
+        self.customer.set_ruleset_data(utils.parent(self.context).id, results)
+    
+    def setUpWidgets(self, ignore_request=False):
+        self.adapters = {}
+        data = self.customer.get_ruleset_data(utils.parent(self.context).id)
+        self.widgets = form.setUpWidgets(
+            self.form_fields, self.prefix, self.context, self.request,
+            form=self, adapters=self.adapters, ignore_request=ignore_request, data=data)
     
     @property
     def form_fields(self):
-        factory = self.identifer(self.context.identifer, self.context.__parent__)
+        factory = self.identifer(self.context.identifer, utils.parent(self.context))
         ids = [k for k,v in self.context.overrides.iteritems() if v]
         return factory.form_fields.select(*ids)
 
+    @property
+    def prefix(self):
+        return 'form_%s' % self.context.id
 
 class OverrideFormRuleset(grok.View):
     grok.context(IRuleset)
@@ -118,17 +158,24 @@ class OverrideFormRuleset(grok.View):
         return li
 
 
+
 class RulesetsTable(BaseDataTable):
     grok.context(interfaces.ICustomer)
     interface_fields = IRuleset
     ignors_fields = ['id']
-    inputs = (dict( title = _('Add Ruleset'),
+    inputs = (dict(  title = _('Add Ruleset'),
                      cssclass = '',
                      type = 'checkbox',
-                     prefix = ADD_RULESET_PREFIX,),)
+                     prefix = ADD_RULESET_PREFIX,
+                     id = 'addruleset'),)
     
     def _ajaxcontent(self, brains):
         return list()
+
+    def inputbuilder_value(self, input, brain):
+        if input.get('id') == 'addruleset':
+            return brain.id in [i.id for i in self.context.get_rulesets()]
+
 
 
 class TabsCustomer(grok.View):
@@ -151,8 +198,7 @@ class TabsCustomer(grok.View):
                 name = name[len('%s.'%ADD_RULESET_PREFIX):]
                 rulesets[name] = value
         self.context.set_rulesets([k for k, v in rulesets.iteritems() if v])
-                
-                
+        
     def customerhtml(self):
         view = DisplayFormCustomer(self.context, self.request)
         return view()

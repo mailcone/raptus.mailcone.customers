@@ -2,8 +2,10 @@ import grok
 
 from zope import schema
 from zope import component
+from zope.annotation.interfaces import IAnnotations
 
 from persistent.list import PersistentList
+from persistent.dict import PersistentDict
 
 from raptus.mailcone.core import bases
 from raptus.mailcone.core.interfaces import IMailcone, ISearchable
@@ -12,6 +14,8 @@ from raptus.mailcone.rules.interfaces import IRulesetContainerLocator
 
 from raptus.mailcone.customers import interfaces
 
+RULESETS_ANNOTATIONS_KEY = 'raptus.mailcone.contents.rulesets'
+RULESET_DATA_ANNOTATIONS_KEY = 'raptus.mailcone.contents.ruleset_data'
 
 
 class Customer(bases.Container):
@@ -20,16 +24,36 @@ class Customer(bases.Container):
     id = None
     name = None
     address = None
-    
-    rulesets = PersistentList()
-    
+
+    @property
+    def rulesets(self):
+        storage = IAnnotations(self)
+        if not storage.has_key(RULESETS_ANNOTATIONS_KEY):
+            storage[RULESETS_ANNOTATIONS_KEY] = PersistentList()
+        return storage[RULESETS_ANNOTATIONS_KEY]
+
     def get_rulesets(self):
         container = component.getUtility(IRulesetContainerLocator)()
         return [container.get_object(i) for i in self.rulesets if i in container]
         
     def set_rulesets(self, ids):
-        self.rulesets = PersistentList(ids)
+        storage = IAnnotations(self)
+        storage[RULESETS_ANNOTATIONS_KEY] = PersistentList()
+        self.rulesets.extend(ids)
 
+    @property
+    def ruleset_data(self):
+        storage = IAnnotations(self)
+        if not storage.has_key(RULESET_DATA_ANNOTATIONS_KEY):
+            storage[RULESET_DATA_ANNOTATIONS_KEY] = PersistentDict()
+        return storage[RULESET_DATA_ANNOTATIONS_KEY]
+
+    def get_ruleset_data(self, id):
+        return self.ruleset_data.get(id, dict())
+
+    def set_ruleset_data(self, id, data):
+        self.ruleset_data.update({id:data})
+        self._p_changed = 1
 
 
 class CustomerContainer(bases.Container):
