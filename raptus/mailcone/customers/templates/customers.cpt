@@ -3,7 +3,17 @@
     <div class="primar-view">
         <div tal:replace="structure view.customerstable" />
         <div class="formControls">
-            <a tal:attributes="href view.addurl" class="ui-add ui-button" i18n:translate="">Add new Customer</a>
+            <a tal:attributes="href view.addurl" class="ui-add ui-button" title="Add a new customer" i18n:attributes="title">
+            	<span class="ui-icon ui-icon-plusthick" />
+            </a>
+            
+            <a tal:attributes="href view.addurl" class="ui-add ui-button" title="Remove selected customers" i18n:attributes="title">
+            	<span class="ui-icon ui-icon-minusthick" />
+            </a>
+            
+            <a tal:attributes="href view.addurl" class="ui-add ui-button" title="Copy selected customers" i18n:attributes="title">
+            	<span class="ui-icon ui-icon-newwin" />
+            </a>
         </div>
     </div>
     <div id="ui-datatable-ajaxcontent">
