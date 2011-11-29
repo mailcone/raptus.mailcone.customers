@@ -4,15 +4,8 @@
         <div tal:replace="structure view.customerstable" />
         <div class="formControls">
             <a tal:attributes="href view.addurl" class="ui-add ui-button" title="Add a new customer" i18n:attributes="title">
-            	<span class="ui-icon ui-icon-plusthick" />
-            </a>
-            
-            <a tal:attributes="href view.addurl" class="ui-add ui-button" title="Remove selected customers" i18n:attributes="title">
-            	<span class="ui-icon ui-icon-minusthick" />
-            </a>
-            
-            <a tal:attributes="href view.addurl" class="ui-add ui-button" title="Copy selected customers" i18n:attributes="title">
-            	<span class="ui-icon ui-icon-newwin" />
+            	<span class="ui-icon ui-icon-plusthick" i18n:translate=""></span>
+            	<span class="text" i18n:translate="">Add Customer</span>
             </a>
         </div>
     </div>
