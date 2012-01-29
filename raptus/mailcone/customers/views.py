@@ -163,7 +163,7 @@ class RulesetsTable(BaseDataTable):
     grok.context(interfaces.ICustomer)
     interface_fields = IRuleset
     ignors_fields = ['id']
-    inputs = (dict(  title = _('Add Ruleset'),
+    inputs = (dict(  title = _('Active'),
                      cssclass = '',
                      type = 'checkbox',
                      prefix = ADD_RULESET_PREFIX,
