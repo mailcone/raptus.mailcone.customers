@@ -66,3 +66,6 @@ def init_customers_container(obj, event):
 class CustomersContainerLocator(bases.BaseLocator):
     splitedpath = ['customers']
 grok.global_utility(CustomersContainerLocator, provides=interfaces.ICustomersContainerLocator)
+
+
+
