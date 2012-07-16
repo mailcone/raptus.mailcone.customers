@@ -1,7 +1,10 @@
 <div class="customeroverride">
     <dl>
       <tal:block tal:repeat="item view.ruleitems">
-          <dt tal:content="item.get('title')">Simple match</dt>
+          <dt>
+              <span class="title" tal:content="item.get('title')">Simple match</span>
+              <span class="description" tal:content="item.get('description')">Customer dedection</span>
+           </dt>
           <dd tal:content="structure item.get('html')">Search string</dd>
       </tal:block>
     </dl>

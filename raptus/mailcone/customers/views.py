@@ -152,7 +152,8 @@ class OverrideFormRuleset(grok.View):
             if not [k for k,v in item.overrides.iteritems() if v]:
                 continue
             html = OverrideFormRuleItem(item, self.request, self.customer)()
-            di = dict(title = item.title,
+            di = dict(description = item.description,
+                      title = item.title,
                       html = html)
             li.append(di)
         return li
