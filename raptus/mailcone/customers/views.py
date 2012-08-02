@@ -119,11 +119,11 @@ class OverrideFormRuleItem(EditForm, IdentifierMixing):
         self.update_form()
         results = dict()
         form.getWidgetsData(self.widgets, self.prefix, results)
-        self.customer.set_ruleset_data(utils.parent(self.context).id, results)
+        self.customer.set_ruleset_data(self.context.id, results)
     
     def setUpWidgets(self, ignore_request=False):
         self.adapters = {}
-        data = self.customer.get_ruleset_data(utils.parent(self.context).id)
+        data = self.customer.get_ruleset_data(self.context.id)
         self.widgets = form.setUpWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             form=self, adapters=self.adapters, ignore_request=ignore_request, data=data)

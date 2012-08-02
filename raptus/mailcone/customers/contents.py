@@ -28,9 +28,7 @@ class Customer(bases.Container):
     @property
     def rulesets(self):
         storage = IAnnotations(self)
-        if not storage.has_key(RULESETS_ANNOTATIONS_KEY):
-            storage[RULESETS_ANNOTATIONS_KEY] = PersistentList()
-        return storage[RULESETS_ANNOTATIONS_KEY]
+        return storage.setdefault(RULESETS_ANNOTATIONS_KEY, PersistentList())
 
     def get_rulesets(self):
         container = component.getUtility(IRulesetContainerLocator)()
@@ -48,8 +46,18 @@ class Customer(bases.Container):
             storage[RULESET_DATA_ANNOTATIONS_KEY] = PersistentDict()
         return storage[RULESET_DATA_ANNOTATIONS_KEY]
 
-    def get_ruleset_data(self, id):
-        return self.ruleset_data.get(id, dict())
+    def get_ruleset_data(self, id, use_default=True):
+        data = self.ruleset_data.get(id, dict())
+        if not use_default:
+            return data
+        overrides = dict()
+        rules = component.getUtility(IRulesetContainerLocator)().get_ruleitems()
+        for rule in rules:
+            for k, v in rule.overrides.iteritems():
+                if v:
+                    overrides[k] = getattr(rule, k)
+        overrides.update(data)
+        return overrides
 
     def set_ruleset_data(self, id, data):
         self.ruleset_data.update({id:data})

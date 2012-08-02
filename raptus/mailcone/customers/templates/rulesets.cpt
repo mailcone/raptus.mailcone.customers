@@ -1,6 +1,6 @@
     <div>
         <div tal:replace="structure view.rulesetstable" />
         <div class="formControls">
-            <a attributes="href view.addurl" class="ui-ajax-content-submit ui-button" i18n:translate="">Submit Rulesets</a>
+            <a attributes="href view.addurl" class="ui-ajax-content-submit ui-button" i18n:translate="">Update Rulesets</a>
         </div>
     </div>
