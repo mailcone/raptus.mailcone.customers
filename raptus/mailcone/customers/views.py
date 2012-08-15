@@ -62,7 +62,7 @@ class Customers(Page):
 
 class AddCustomerForm(AddForm):
     grok.context(interfaces.ICustomersContainer)
-    grok.require('zope.Public')
+    grok.require('zope.View')
     form_fields = grok.AutoFields(interfaces.ICustomer).omit('id')
     label = _('Add a new customer')
 
@@ -73,7 +73,7 @@ class AddCustomerForm(AddForm):
 
 class EditCustomerForm(EditForm):
     grok.context(interfaces.ICustomer)
-    grok.require('zope.Public')
+    grok.require('zope.View')
     form_fields = grok.AutoFields(interfaces.ICustomer).omit('id')
     label = _('Edit customer')
 
@@ -81,7 +81,7 @@ class EditCustomerForm(EditForm):
 
 class DeleteCustomerForm(DeleteForm):
     grok.context(interfaces.ICustomer)
-    grok.require('zope.Public')
+    grok.require('zope.View')
     
     def item_title(self):
         return self.context.name
@@ -183,7 +183,7 @@ class TabsCustomer(grok.View):
     grok.name('index')
     grok.template('customer')
     grok.context(interfaces.ICustomer)
-    grok.require('zope.Public')
+    grok.require('zope.View')
 
     def __call__(self):
         data = self.request.form.get('metadata', None)
