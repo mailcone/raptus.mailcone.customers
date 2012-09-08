@@ -101,7 +101,6 @@ class OverrideFormRuleItem(EditForm, IdentifierMixing):
     
     actions = list()
     
-    
     def __call__(self):
         data = self.request.form.get('metadata', None)
         if data:

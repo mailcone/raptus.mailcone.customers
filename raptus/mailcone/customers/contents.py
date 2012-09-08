@@ -47,12 +47,15 @@ class Customer(bases.Container):
         return storage[RULESET_DATA_ANNOTATIONS_KEY]
 
     def get_ruleset_data(self, id, use_default=True):
+        # bug here !! data is parsend as string
         data = self.ruleset_data.get(id, dict())
         if not use_default:
             return data
         overrides = dict()
         rules = component.getUtility(IRulesetContainerLocator)().get_ruleitems()
         for rule in rules:
+            if id is not rule.id:
+                continue
             for k, v in rule.overrides.iteritems():
                 if v:
                     overrides[k] = getattr(rule, k)
